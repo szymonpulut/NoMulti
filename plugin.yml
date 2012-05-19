@@ -1,0 +1,8 @@
+# This determines the command prefix when there are conflicts (/name:home, /name:help, etc.)
+name: NoMulti
+main: com.github.Invicter.NoMulti
+# Note to developers: This next line cannot change, or the automatic versioning system will break.
+version: 0.1
+website: http://dev.bukkit.org/server-mods/nomulti
+description: Easy, and lightweight multi account (per IP) blocker
+author: Invicter

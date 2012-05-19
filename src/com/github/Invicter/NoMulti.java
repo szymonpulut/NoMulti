@@ -22,45 +22,56 @@ public class NoMulti extends JavaPlugin implements Listener {
 	public static final Logger logger = Bukkit.getLogger();
 
 	public void reloadCustomConfig() {
-		if (customConfigFile == null) {
-			customConfigFile = new File(getDataFolder(), "");
-		}
-		customConfig = YamlConfiguration.loadConfiguration(customConfigFile);
+	    if (customConfigFile == null) {
+	    customConfigFile = new File(getDataFolder(), "players.yml");
+	    }	
+	    customConfig = YamlConfiguration.loadConfiguration(customConfigFile);
+	 
 
-		InputStream defConfigStream = getResource("players.yml");
-		if (defConfigStream != null) {
-			YamlConfiguration defConfig = YamlConfiguration
-					.loadConfiguration(defConfigStream);
-			customConfig.setDefaults(defConfig);
-		}
+	    InputStream defConfigStream = getResource("players.yml");
+	    if (defConfigStream != null) {
+	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+	        customConfig.setDefaults(defConfig);
+	    }
 	}
-
+	
 	public void saveCustomConfig() {
-		if (customConfig == null || customConfigFile == null) {
-			return;
-		}
-		try {
-			customConfig.save(customConfigFile);
-		} catch (IOException ex) {
-			Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE,
-					"[NoMulti] Could not save config to " + customConfigFile,
-					ex);
-		}
+	    if (customConfig == null || customConfigFile == null) {
+	    return;
+	    }
+	    try {
+	        customConfig.save(customConfigFile);
+	    } catch (IOException ex) {
+	        Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "[NoMulti] Could not save config to " + customConfigFile, ex);
+	    }
 	}
-
+	
 	public FileConfiguration getCustomConfig() {
-		if (customConfig == null) {
-			reloadCustomConfig();
-		}
-		return customConfig;
+	    if (customConfig == null) {
+	        reloadCustomConfig();
+	    }
+	    return customConfig;
 	}
 
-	public void onEnable() {
-
+	@Override
+	public void onEnable()
+	{
+		getServer().getPluginManager().registerEvents(this, this);
+		Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Enabling plugin");
+		reloadConfig();
+		saveConfig();
+		reloadCustomConfig();
+		saveCustomConfig();
+		Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Plugin enabled");
 	}
-
-	public void onDisable() {
-
+	
+	@Override
+	public void onDisable()
+	{
+		Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Disabling plugin");
+		saveConfig();
+		saveCustomConfig();
+		Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Plugin disabled");
 	}
 
 	@EventHandler
@@ -84,6 +95,7 @@ public class NoMulti extends JavaPlugin implements Listener {
 
 			if (playername != this.getCustomConfig().getString(adress)) {
 				player.kickPlayer(getConfig().getString("kick-message"));
+				Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "Disconnecting "+playername+" [/"+adress+"]: "+getConfig().getString("kick-message"));
 			}
 		}
 		return true;
