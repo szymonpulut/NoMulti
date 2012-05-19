@@ -75,27 +75,30 @@ public class NoMulti extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler
-	public boolean playerJoinEvent(PlayerJoinEvent event) {
+	public boolean playerJoinEvent(PlayerJoinEvent event){
 
 		Player player = event.getPlayer();
 		String adress = player.getAddress().getHostName();
 		adress.replace("/", "");
 
 		String playername = player.getName();
-
-		if (this.getCustomConfig().getString(adress) == null
-				|| this.getCustomConfig().getString(adress) == "NULL"
-				|| this.getCustomConfig().getString(adress) == "null"
-				|| this.getCustomConfig().getString(adress) == "") {
-			this.getCustomConfig().set(adress, playername);
-		} else if (this.getCustomConfig().getString(adress) != null
-				&& this.getCustomConfig().getString(adress) != "NULL"
-				&& this.getCustomConfig().getString(adress) != "null"
-				&& this.getCustomConfig().getString(adress) != "") {
-
-			if (playername != this.getCustomConfig().getString(adress)) {
-				player.kickPlayer(getConfig().getString("kick-message"));
-				Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "Disconnecting "+playername+" [/"+adress+"]: "+getConfig().getString("kick-message"));
+		
+		if(!player.hasPermission("nomulti.exempt"))
+		{
+			if (this.getCustomConfig().getString(adress) == null
+					|| this.getCustomConfig().getString(adress) == "NULL"
+					|| this.getCustomConfig().getString(adress) == "null"
+					|| this.getCustomConfig().getString(adress) == "") {
+				this.getCustomConfig().set(adress, playername);
+			} else if (this.getCustomConfig().getString(adress) != null
+					&& this.getCustomConfig().getString(adress) != "NULL"
+					&& this.getCustomConfig().getString(adress) != "null"
+					&& this.getCustomConfig().getString(adress) != "") {
+	
+				if (playername != this.getCustomConfig().getString(adress)) {
+					player.kickPlayer(getConfig().getString("kick-message"));
+					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "Disconnecting "+playername+" [/"+adress+"]: "+getConfig().getString("kick-message"));
+				}
 			}
 		}
 		return true;
