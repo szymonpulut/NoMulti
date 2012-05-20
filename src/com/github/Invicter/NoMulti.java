@@ -85,6 +85,16 @@ public class NoMulti extends JavaPlugin implements Listener {
         
 		if(!player.hasPermission("nomulti.exempt"))
 		{
+			if(this.getCustomConfig().getString(adress) == null ||
+			this.getCustomConfig().getString(adress) == "" ||
+			this.getCustomConfig().getString(adress) == "null" ||
+			this.getCustomConfig().getString(adress) == "NULL" ||
+			this.getCustomConfig().getString(adress) == "false")
+			{
+				this.getCustomConfig().set(adress, playername);
+			}
+			else 
+			{
 				if (playername != this.getCustomConfig().getString(adress)) 
 				{
 					event.setKickMessage(getConfig().getString("kick-message"));
@@ -94,10 +104,7 @@ public class NoMulti extends JavaPlugin implements Listener {
 				{
 					//Nothing
 				}
-				else 
-				{
-					this.getCustomConfig().set(adress, playername);
-				}
+			}
 				
 	        this.saveCustomConfig();
 	        this.reloadCustomConfig();
