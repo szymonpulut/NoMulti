@@ -118,7 +118,7 @@ public class NoMulti extends JavaPlugin implements Listener {
 		
 		if(cmd.getName().equalsIgnoreCase("nomulti")){
 			for(int i = 0; i<args.length; i++){
-				arguments += " "+args[1];
+				arguments += " "+args[i];
 			}
 			Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[PLAYER_COMMAND] "+p.getName()+": /"+commandLabel+arguments);
 			
@@ -159,13 +159,16 @@ public class NoMulti extends JavaPlugin implements Listener {
 					this.reloadConfig();
 					this.reloadCustomConfig();
 					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Configs reloaded");
-					p.sendMessage(ChatColor.RED+"NoMulti reloaded!");
 				}
 				else
 				{
 					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
 					p.sendMessage(ChatColor.RED+"You don't have permissions!");
 				}
+			}
+			else
+			{
+				Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" tried to use that command, but it doesn't exist");
 			}
 			
 		}
