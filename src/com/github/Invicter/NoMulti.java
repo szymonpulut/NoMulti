@@ -3,10 +3,14 @@ package com.github.Invicter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -55,8 +59,8 @@ public class NoMulti extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable()
 	{
-		getServer().getPluginManager().registerEvents(this, this);
 		Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Enabling plugin");
+		getServer().getPluginManager().registerEvents(this, this);
 		this.getConfig().options().copyDefaults(true);
         this.saveConfig();
         this.getCustomConfig().options().copyDefaults(true);
@@ -81,9 +85,8 @@ public class NoMulti extends JavaPlugin implements Listener {
 		String playername = player.getName();
         
 		this.saveCustomConfig();
-        this.reloadCustomConfig();
-        
-		if(!player.hasPermission("nomulti.exempt"))
+		List<String> exceptions = getConfig().getStringList("exceptions");
+		if(!exceptions.contains(playername))
 		{
 			if(this.getCustomConfig().getString(adress) == null ||
 			this.getCustomConfig().getString(adress) == "" ||
@@ -92,24 +95,55 @@ public class NoMulti extends JavaPlugin implements Listener {
 			this.getCustomConfig().getString(adress) == "false")
 			{
 				this.getCustomConfig().set(adress, playername);
+				this.saveCustomConfig();
 			}
 			else 
 			{
-				if (playername != this.getCustomConfig().getString(adress)) 
+				this.saveCustomConfig();
+				this.reloadCustomConfig();
+				
+				if (!this.getCustomConfig().getString(adress).equalsIgnoreCase(playername)) 
 				{
-					event.setKickMessage(getConfig().getString("kick-message"));
+					event.setKickMessage(this.getConfig().getString("kick-message"));
 			    	event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
 				}
-				else if (playername == this.getCustomConfig().getString(adress))
+			}
+		} 
+		return true;
+	}
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
+		if(cmd.getName().equalsIgnoreCase("nomulti")){
+			Player p = (Player) sender;
+			
+			if(args.length < 1)
+			{
+				p.sendMessage(ChatColor.RED+"/nomulti add <nickName> - Adds a new player exception");
+			}
+			else if(args[0].equalsIgnoreCase("add"))
+			{
+				if(p.hasPermission("nomulti.add"))
 				{
-					//Nothing
+					if(args.length == 2)
+					{
+						List<String> newExceptions = getConfig().getStringList("exceptions");
+						newExceptions.add(args[1]);
+						this.getConfig().set("exceptions", newExceptions);
+						this.saveConfig();
+						p.sendMessage(ChatColor.RED+"Player "+args[1]+" added to exceptions list");
+					}
+					else
+					{
+						p.sendMessage(ChatColor.RED+"Correct syntax:");
+						p.sendMessage(ChatColor.RED+"/nomulti add <nickName> - Adds a new player exception");
+					}
+				}
+				else
+				{
+					p.sendMessage(ChatColor.RED+"You don't have permissions!");
 				}
 			}
-				
-	        this.saveCustomConfig();
-	        this.reloadCustomConfig();
-	        
+			
 		}
-	return true;
+		return true;
 	}
 }
