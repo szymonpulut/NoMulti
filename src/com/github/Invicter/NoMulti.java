@@ -111,13 +111,17 @@ public class NoMulti extends JavaPlugin implements Listener {
 		} 
 		return true;
 	}
+	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
+		Player p = (Player) sender;
+		
 		if(cmd.getName().equalsIgnoreCase("nomulti")){
-			Player p = (Player) sender;
+			Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[PLAYER_COMMAND] "+p.getName()+": /"+commandLabel+" "+args);
 			
 			if(args.length < 1)
 			{
 				p.sendMessage(ChatColor.RED+"/nomulti add <nickName> - Adds a new player exception");
+				p.sendMessage(ChatColor.RED+"/nomulti reload - Reloads plugin configs");
 			}
 			else if(args[0].equalsIgnoreCase("add"))
 			{
@@ -139,6 +143,22 @@ public class NoMulti extends JavaPlugin implements Listener {
 				}
 				else
 				{
+					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
+					p.sendMessage(ChatColor.RED+"You don't have permissions!");
+				}
+			}
+			else if(args[0].equalsIgnoreCase("reload"))
+			{
+				if(p.hasPermission("nomulti.reload"))
+				{
+					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Reloading configs");
+					this.reloadConfig();
+					this.reloadCustomConfig();
+					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Configs reloaded");
+				}
+				else
+				{
+					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
 					p.sendMessage(ChatColor.RED+"You don't have permissions!");
 				}
 			}
