@@ -114,9 +114,13 @@ public class NoMulti extends JavaPlugin implements Listener {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
 		Player p = (Player) sender;
+		String arguments = "";
 		
 		if(cmd.getName().equalsIgnoreCase("nomulti")){
-			Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[PLAYER_COMMAND] "+p.getName()+": /"+commandLabel+" "+args);
+			for(int i = 0; i<args.length; i++){
+				arguments += " "+args[1];
+			}
+			Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[PLAYER_COMMAND] "+p.getName()+": /"+commandLabel+arguments);
 			
 			if(args.length < 1)
 			{
@@ -155,6 +159,7 @@ public class NoMulti extends JavaPlugin implements Listener {
 					this.reloadConfig();
 					this.reloadCustomConfig();
 					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Configs reloaded");
+					p.sendMessage(ChatColor.RED+"NoMulti reloaded!");
 				}
 				else
 				{
