@@ -125,6 +125,7 @@ public class NoMulti extends JavaPlugin implements Listener {
 			if(args.length < 1)
 			{
 				p.sendMessage(ChatColor.RED+"/nomulti add <nickName> - Adds a new player exception");
+				p.sendMessage(ChatColor.RED+"/nomulti remove <IP> - Remove IP from database");
 				p.sendMessage(ChatColor.RED+"/nomulti reload - Reloads plugin configs");
 			}
 			else if(args[0].equalsIgnoreCase("add"))
@@ -151,6 +152,39 @@ public class NoMulti extends JavaPlugin implements Listener {
 					p.sendMessage(ChatColor.RED+"You don't have permissions!");
 				}
 			}
+			else if(args[0].equalsIgnoreCase("remove"))
+			{
+				if(p.hasPermission("nomulti.remove"))
+				{
+					if(args.length == 2)
+					{
+						if(this.getCustomConfig().getString(args[1]) == null ||
+						this.getCustomConfig().getString(args[1]) == "" ||
+						this.getCustomConfig().getString(args[1]) == "null" ||
+						this.getCustomConfig().getString(args[1]) == "NULL" ||
+						this.getCustomConfig().getString(args[1]) == "false")
+						{
+							p.sendMessage(ChatColor.RED+"IP "+args[1]+" wasn't in database");
+						}
+						else
+						{
+							this.getCustomConfig().set(args[1], null);
+							this.saveCustomConfig();
+							p.sendMessage(ChatColor.RED+"IP "+args[1]+" removed from database");
+						}
+					}
+					else
+					{
+						p.sendMessage(ChatColor.RED+"Correct syntax:");
+						p.sendMessage(ChatColor.RED+"/nomulti remove <IP> - Adds a new player exception");
+					}
+				}
+				else
+				{
+					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
+					p.sendMessage(ChatColor.RED+"You don't have permissions!");
+				}
+			}
 			else if(args[0].equalsIgnoreCase("reload"))
 			{
 				if(p.hasPermission("nomulti.reload"))
@@ -169,9 +203,10 @@ public class NoMulti extends JavaPlugin implements Listener {
 			else
 			{
 				Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" tried to use that command, but it doesn't exist");
-			}
+			}	
 			
 		}
+
 		return true;
 	}
 }
