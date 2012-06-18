@@ -2,12 +2,15 @@
 name: NoMulti
 main: com.github.Invicter.NoMulti
 # Note to developers: This next line cannot change, or the automatic versioning system will break.
-version: 1.0
+version: 2.0
 website: http://dev.bukkit.org/server-mods/nomulti
 description: Easy, and lightweight multi account (per IP) blocker
 author: Invicter
 commands:
   nomulti:
     description: In game acces to NoMulti plugin
-    usage: /nomulti add <nickName> - Add exception to 1 player per IP
+    usage: /nomulti exception add <nickName> - Adds a new player exception
+           /nomulti exception remove <nickName> - Removes player exception
+           /nomulti remove <IP> - Removes IP from database
+           /nomulti add <IP> <nickName> - Adds new IP to player binding
            /nomulti reload - Reloads plugin
