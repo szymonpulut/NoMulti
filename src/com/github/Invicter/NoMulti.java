@@ -94,7 +94,7 @@ public class NoMulti extends JavaPlugin implements Listener {
 			this.getCustomConfig().getString(adress) == "NULL" ||
 			this.getCustomConfig().getString(adress) == "false")
 			{
-				this.getCustomConfig().set(adress, playername);
+				this.getCustomConfig().set(adress, playername.toLowerCase());
 				this.saveCustomConfig();
 			}
 			else 
@@ -121,147 +121,169 @@ public class NoMulti extends JavaPlugin implements Listener {
 			
 			if(args.length < 1)
 			{
-				p.sendMessage(ChatColor.RED+"/nomulti exception add <nickName> - Adds a new player exception");
-				p.sendMessage(ChatColor.RED+"/nomulti exception remove <nickName> - Removes player exception");
-				p.sendMessage(ChatColor.RED+"/nomulti database remove <IP> - Remove IP from database");
-				p.sendMessage(ChatColor.RED+"/nomulti database add <IP> <player> - Adds IP to player binding");
-				p.sendMessage(ChatColor.RED+"/nomulti reload - Reloads plugin configs");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti exception add <nickName> - Adds a new player exception");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti exception remove <nickName> - Removes player exception");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti database remove <IP> - Remove IP from database");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti database add <IP> <player> - Adds IP to player binding");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti reload - Reloads plugin configs");
 			}
 			else if(args[0].equalsIgnoreCase("exception"))
 			{
-				if(args[1].equalsIgnoreCase("add"))
+				if(args.length > 1)
 				{
-					if(p.hasPermission("nomulti.exception.add"))
+					if(args[1].equalsIgnoreCase("add"))
 					{
-						if(args.length == 3)
+						if(p.hasPermission("nomulti.exception.add"))
 						{
-							List<String> exceptions = getConfig().getStringList("exceptions");
-							List<String> newExceptions = getConfig().getStringList("exceptions");
-							newExceptions.add(args[1]);
-							if(exceptions.equals(newExceptions))
+							if(args.length == 3)
 							{
-								p.sendMessage(ChatColor.RED+"Player "+ChatColor.GOLD+args[2]+" already was on exceptions list");
+								List<String> exceptions = getConfig().getStringList("exceptions");
+								List<String> newExceptions = getConfig().getStringList("exceptions");
+								newExceptions.add(args[2].toLowerCase());
+								if(exceptions.equals(newExceptions))
+								{
+									p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Player "+ChatColor.GOLD+args[2]+ChatColor.RED+" already was on exceptions list");
+								}
+								else
+								{
+									this.getConfig().set("exceptions", newExceptions);
+									this.saveConfig();
+									p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Player "+ChatColor.GOLD+args[2]+ChatColor.RED+" added to exceptions list");
+								}
 							}
 							else
 							{
-								this.getConfig().set("exceptions", newExceptions);
-								this.saveConfig();
-								p.sendMessage(ChatColor.RED+"Player "+ChatColor.GOLD+args[2]+" added to exceptions list");
+								p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Correct syntax:");
+								p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti exception add <nickName> - Adds a new player exception");
 							}
 						}
 						else
 						{
-							p.sendMessage(ChatColor.RED+"Correct syntax:");
-							p.sendMessage(ChatColor.RED+"/nomulti exception add <nickName> - Adds a new player exception");
+							Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
+							p.sendMessage(ChatColor.RED+"You don't have permissions!");
 						}
 					}
-					else
+					else if(args[1].equalsIgnoreCase("remove"))
 					{
-						Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
-						p.sendMessage(ChatColor.RED+"You don't have permissions!");
-					}
-				}
-				else if(args[1].equalsIgnoreCase("remove"))
-				{
-					if(args.length == 3)
-					{
-						List<String> Exceptions = getConfig().getStringList("exceptions");
-						List<String> newExceptions = getConfig().getStringList("exceptions");
-						newExceptions.remove(args[1]);
-						if(Exceptions.equals(newExceptions))
+						if(p.hasPermission("nomulti.exception.remove"))
 						{
-							p.sendMessage(ChatColor.RED+"Player "+ChatColor.GOLD+args[2]+" wasn't on exceptions list");
+							if(args.length == 3)
+							{
+								List<String> exceptions = getConfig().getStringList("exceptions");
+								List<String> newExceptions = getConfig().getStringList("exceptions");
+								newExceptions.remove(args[2].toLowerCase());
+								if(exceptions.equals(newExceptions))
+								{
+									p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Player "+ChatColor.GOLD+args[2]+ChatColor.RED+" wasn't on exceptions list");
+								}
+								else
+								{
+									this.getConfig().set("exceptions", newExceptions);
+									this.saveConfig();
+									p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Player "+ChatColor.GOLD+args[2]+ChatColor.RED+" removed from exceptions list");
+								}
+							}
+							else
+							{
+								p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Correct syntax:");
+								p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti exception remove <nickName> - Removes player exception");
+							}
 						}
 						else
 						{
-							this.getConfig().set("exceptions", newExceptions);
-							this.saveConfig();
-							p.sendMessage(ChatColor.RED+"Player "+ChatColor.GOLD+args[2]+" removed from exceptions list");
+							Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
+							p.sendMessage(ChatColor.RED+"You don't have permissions!");
 						}
 					}
-					else
+				}
+			}
+			else if(args[0].equalsIgnoreCase("database"))
+			{
+				if(args.length > 1)
+				{
+					if(args[1].equalsIgnoreCase("remove"))
 					{
-						p.sendMessage(ChatColor.RED+"Correct syntax:");
-						p.sendMessage(ChatColor.RED+"/nomulti exception remove <nickName> - Removes player exception");
+						if(p.hasPermission("nomulti.database.remove"))
+						{
+							if(args.length == 3)
+							{
+								if(this.getCustomConfig().getString(args[2]) == null ||
+								this.getCustomConfig().getString(args[2]) == "" ||
+								this.getCustomConfig().getString(args[2]) == "null" ||
+								this.getCustomConfig().getString(args[2]) == "NULL" ||
+								this.getCustomConfig().getString(args[2]) == "false")
+								{
+									p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"IP "+ChatColor.GOLD+args[2]+ChatColor.RED+" wasn't in database");
+								}
+								else
+								{
+									this.getCustomConfig().set(args[2], null);
+									this.saveCustomConfig();
+									p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"IP "+ChatColor.GOLD+args[2]+ChatColor.RED+" removed from database");
+								}
+							}
+							else
+							{
+								p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Correct syntax:");
+								p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti database remove <IP> - Removes selected IP from database");
+							}
+						}
+						else
+						{
+							Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
+							p.sendMessage(ChatColor.RED+"You don't have permissions!");
+						}
+					}
+					else if(args[1].equalsIgnoreCase("add"))
+					{
+						if(p.hasPermission("nomulti.database.add"))
+						{
+							if(args.length == 4)
+							{
+								if(this.getCustomConfig().getString(args[2]) == null ||
+								this.getCustomConfig().getString(args[2]) == "" ||
+								this.getCustomConfig().getString(args[2]) == "null" ||
+								this.getCustomConfig().getString(args[2]) == "NULL" ||
+								this.getCustomConfig().getString(args[2]) == "false")
+								{
+									this.getCustomConfig().set(args[2], args[3].toLowerCase());
+									this.saveCustomConfig();
+									p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"IP "+ChatColor.GOLD+args[2]+ChatColor.RED+" binded to player "+ChatColor.GOLD+args[3]);
+								}
+								else
+								{
+									p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"IP "+ChatColor.GOLD+args[2]+ChatColor.RED+" already is in database");
+								}
+							}
+							else
+							{
+								p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Correct syntax:");
+								p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti database add <IP> <nickName> - Adds a new player to IP binding");
+							}
+						}
+						else
+						{
+							Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
+							p.sendMessage(ChatColor.RED+"You don't have permissions!");
+						}
 					}
 				}
 				else
 				{
-					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
-					p.sendMessage(ChatColor.RED+"You don't have permissions!");
+					p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Bad command syntax:");
+					p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti exception add <nickName> - Adds a new player exception");
+					p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti exception remove <nickName> - Removes player exception");
+					p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti database remove <IP> - Remove IP from database");
+					p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti database add <IP> <player> - Adds IP to player binding");
+					p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti reload - Reloads plugin configs");
+					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" tried to use that command, but it doesn't exist");
 				}
 			}
-			else if(args[0].equalsIgnoreCase("database"))
-				if(args[1].equalsIgnoreCase("remove"))
-				{
-					if(p.hasPermission("nomulti.database.remove"))
-					{
-						if(args.length == 3)
-						{
-							if(this.getCustomConfig().getString(args[2]) == null ||
-							this.getCustomConfig().getString(args[2]) == "" ||
-							this.getCustomConfig().getString(args[2]) == "null" ||
-							this.getCustomConfig().getString(args[2]) == "NULL" ||
-							this.getCustomConfig().getString(args[2]) == "false")
-							{
-								p.sendMessage(ChatColor.RED+"IP "+ChatColor.GOLD+args[2]+" wasn't in database");
-							}
-							else
-							{
-								this.getCustomConfig().set(args[1], null);
-								this.saveCustomConfig();
-								p.sendMessage(ChatColor.RED+"IP "+ChatColor.GOLD+args[2]+" removed from database");
-							}
-						}
-						else
-						{
-							p.sendMessage(ChatColor.RED+"Correct syntax:");
-							p.sendMessage(ChatColor.RED+"/nomulti database remove <IP> - Removes selected IP from database");
-						}
-					}
-					else
-					{
-						Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
-						p.sendMessage(ChatColor.RED+"You don't have permissions!");
-					}
-				}
-				if(args[1].equalsIgnoreCase("add"))
-				{
-					if(p.hasPermission("nomulti.database.add"))
-					{
-						if(args.length == 3)
-						{
-							if(this.getCustomConfig().getString(args[2]) == null ||
-							this.getCustomConfig().getString(args[2]) == "" ||
-							this.getCustomConfig().getString(args[2]) == "null" ||
-							this.getCustomConfig().getString(args[2]) == "NULL" ||
-							this.getCustomConfig().getString(args[2]) == "false")
-							{
-								this.getCustomConfig().set(args[2], args[3]);
-								this.saveCustomConfig();
-								p.sendMessage(ChatColor.RED+"IP "+ChatColor.GOLD+args[2]+" binded to player "+ChatColor.GOLD+args[3]);
-							}
-							else
-							{
-								p.sendMessage(ChatColor.RED+"IP "+ChatColor.GOLD+args[2]+" already is in database");
-							}
-						}
-						else
-						{
-							p.sendMessage(ChatColor.RED+"Correct syntax:");
-							p.sendMessage(ChatColor.RED+"/nomulti database add <IP> <nickName> - Adds a new player to IP binding");
-						}
-					}
-					else
-					{
-						Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
-						p.sendMessage(ChatColor.RED+"You don't have permissions!");
-					}
-				}
 			else if(args[0].equalsIgnoreCase("reload"))
 			{
 				if(p.hasPermission("nomulti.reload"))
 				{
+					p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"NoMulti reloaded!");
 					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Reloading configs");
 					this.reloadConfig();
 					this.reloadCustomConfig();
@@ -272,9 +294,16 @@ public class NoMulti extends JavaPlugin implements Listener {
 					Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" hasn't permissions to do that");
 					p.sendMessage(ChatColor.RED+"You don't have permissions!");
 				}
+				
 			}
 			else
 			{
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"Bad command syntax:");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti exception add <nickName> - Adds a new player exception");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti exception remove <nickName> - Removes player exception");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti database remove <IP> - Remove IP from database");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti database add <IP> <player> - Adds IP to player binding");
+				p.sendMessage(ChatColor.BLUE+"[NoMulti] "+ChatColor.RED+"/nomulti reload - Reloads plugin configs");
 				Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, p.getName()+" tried to use that command, but it doesn't exist");
 			}	
 			
