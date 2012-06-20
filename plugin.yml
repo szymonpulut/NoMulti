@@ -2,7 +2,7 @@
 name: NoMulti
 main: com.github.Invicter.NoMulti
 # Note to developers: This next line cannot change, or the automatic versioning system will break.
-version: 2.1
+version: 2.2
 website: http://dev.bukkit.org/server-mods/nomulti
 description: Easy, and lightweight multi account (per IP) blocker
 author: Invicter

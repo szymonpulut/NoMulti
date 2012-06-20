@@ -92,7 +92,7 @@ public class NoMulti extends JavaPlugin implements Listener {
         
 		this.saveCustomConfig();
 		List<String> exceptions = getConfig().getStringList("exceptions");
-		if(!exceptions.contains(playername))
+		if(!exceptions.contains(playername.toLowerCase()))
 		{
 			if(this.getCustomConfig().getString(adress) == null ||
 			this.getCustomConfig().getString(adress) == "" ||
