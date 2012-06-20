@@ -65,6 +65,12 @@ public class NoMulti extends JavaPlugin implements Listener {
         this.saveConfig();
         this.getCustomConfig().options().copyDefaults(true);
         this.saveCustomConfig();
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+        	Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Cannot submit data into PluginMetrics");
+        }
 		Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "[NoMulti] Plugin enabled");
 	}
 	
